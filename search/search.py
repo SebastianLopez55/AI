@@ -87,13 +87,20 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
 
-    #Keeps track of visited nodes. Key for graph search
+    #Data structure declaration. Note: set() is key for Graph traversal (No repeats)
     reached = set()
-    frontier = util.Stack
+    frontier = util.Stack()
+
+    #Add starting node 
+    nodeStartState = (problem.getStartState(), [], 0)
+    frontier.push(nodeStartState)
 
     while not frontier.isEmpty():
         node = frontier.pop()
+        if problem.isGoalState(node.getStartState()):
+            return node.getCostOfActions()
 
+    return []
     
 
     # print("Start:", problem.getStartState())
