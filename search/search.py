@@ -204,11 +204,9 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
                 cost = childNode[2] + node[2] 
 
                 functionEstimator = cost + heuristic(child, problem)
-                frontier.push((child,actions,cost), functionEstimator)
-
+                frontier.push((child, actions, cost), functionEstimator)
 
     util.raiseNotDefined()
-
 
 # Abbreviations
 bfs = breadthFirstSearch
