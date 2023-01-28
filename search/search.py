@@ -96,16 +96,23 @@ def depthFirstSearch(problem: SearchProblem):
     frontier.push(nodeStartState)
 
     while not frontier.isEmpty():
-        node = frontier.pop()
-        if problem.isGoalState(node.getStartState()):
-            return node.getCostOfActions()
+        node = frontier.pop() #Format(tuple): ('A', [], 0)
+        if problem.isGoalState(node[0]):
+            return node[1] #Format(actions list): []
+        if node[0] not in reached:
+            reached.add(node[0])
+
+            for childNode in problem.getSuccessors(node):
+                print("ChildNode:", childNode)
+                frontier.push(childNode)
 
     return []
     
 
-    # print("Start:", problem.getStartState())
-    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print("Empty?:", frontier.isEmpty())
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
     #util.raiseNotDefined()
 
