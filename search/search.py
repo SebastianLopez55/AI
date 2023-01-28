@@ -105,9 +105,9 @@ def depthFirstSearch(problem: SearchProblem):
             for childNode in problem.getSuccessors(node[0]):
 
                 child = childNode[0]
-                actions = [childNode[1]] + node[1]
+                actions =  node[1] + [childNode[1]]
                 cost = childNode[2] + node[2]
-                
+
                 frontier.push((child,actions,cost))
     
 
@@ -115,8 +115,6 @@ def depthFirstSearch(problem: SearchProblem):
     # print("Start:", problem.getStartState())
     # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-
-    util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
