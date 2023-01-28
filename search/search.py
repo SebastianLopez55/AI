@@ -86,6 +86,7 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
+    "*** YOUR CODE HERE ***"
 
     #Data structure declaration. Note: set() is key for Graph traversal (No repeats)
     reached = set()
@@ -106,19 +107,37 @@ def depthFirstSearch(problem: SearchProblem):
 
                 child = childNode[0]
                 actions =  node[1] + [childNode[1]]
-                cost = childNode[2] + node[2]
+                cost = childNode[2] + node[2] # Dummy variable
 
                 frontier.push((child,actions,cost))
     
-
-    # print("Empty?:", frontier.isEmpty())
-    # print("Start:", problem.getStartState())
-    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+
+    #Data structure declaration. 
+    reached = set()
+    frontier = util.Queue()
+
+    #Add starting node 
+    nodeStartState = (problem.getStartState(), [], 0)
+    frontier.push(nodeStartState)
+
+    while not frontier.isEmpty():
+        node = frontier.pop() #Format(tuple): ('A', [], 0)
+        if problem.isGoalState(node[0]):
+            return node[1] #Format(actions list): []
+        if node[0] not in reached:
+            reached.add(node[0])
+
+            for childNode in problem.getSuccessors(node[0]):
+
+                child = childNode[0]
+                actions =  node[1] + [childNode[1]]
+                cost = childNode[2] + node[2] # Dummy variable
+
+                frontier.push((child,actions,cost))
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
