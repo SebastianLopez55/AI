@@ -143,6 +143,31 @@ def breadthFirstSearch(problem: SearchProblem):
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+
+    #Data structure declaration. 
+    reached = set()
+    
+    frontier = util.PriorityQueue()
+
+    #Add starting node 
+    nodeStartState = (problem.getStartState(), [], 0)
+    frontier.push(nodeStartState, 0)
+
+    while not frontier.isEmpty():
+        node = frontier.pop() #Format(tuple): ('A', [], 0)
+        if problem.isGoalState(node[0]):
+            return node[1] #Format(actions list): []
+        if node[0] not in reached:
+            reached.add(node[0])
+
+            for childNode in problem.getSuccessors(node[0]):
+
+                child = childNode[0]
+                actions =  node[1] + [childNode[1]]
+                cost = childNode[2] + node[2] 
+
+                frontier.push((child,actions,cost), cost)
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -155,6 +180,33 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+
+    #Data structure declaration. 
+    reached = set()
+    
+    frontier = util.PriorityQueue()
+
+    #Add starting node 
+    nodeStartState = (problem.getStartState(), [], 0)
+    frontier.push(nodeStartState, 0)
+
+    while not frontier.isEmpty():
+        node = frontier.pop() #Format(tuple): ('A', [], 0)
+        if problem.isGoalState(node[0]):
+            return node[1] #Format(actions list): []
+        if node[0] not in reached:
+            reached.add(node[0])
+
+            for childNode in problem.getSuccessors(node[0]):
+
+                child = childNode[0]
+                actions =  node[1] + [childNode[1]]
+                cost = childNode[2] + node[2] 
+
+                functionEstimator = cost + heuristic(child, problem)
+                frontier.push((child,actions,cost), functionEstimator)
+
+
     util.raiseNotDefined()
 
 
