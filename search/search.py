@@ -102,19 +102,21 @@ def depthFirstSearch(problem: SearchProblem):
         if node[0] not in reached:
             reached.add(node[0])
 
-            for childNode in problem.getSuccessors(node):
-                print("ChildNode:", childNode)
-                frontier.push(childNode)
+            for childNode in problem.getSuccessors(node[0]):
 
-    return []
+                child = childNode[0]
+                actions = [childNode[1]] + node[1]
+                cost = childNode[2] + node[2]
+                
+                frontier.push((child,actions,cost))
     
 
-    print("Empty?:", frontier.isEmpty())
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    # print("Empty?:", frontier.isEmpty())
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
-    #util.raiseNotDefined()
+    util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
