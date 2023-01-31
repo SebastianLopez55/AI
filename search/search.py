@@ -205,7 +205,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
                 functionEstimator = cost + heuristic(child, problem)
                 frontier.push((child, actions, cost), functionEstimator)
-
+                
     util.raiseNotDefined()
 
 # Abbreviations

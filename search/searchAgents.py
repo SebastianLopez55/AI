@@ -296,7 +296,19 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+
+        print(" == TEST ZONE ==\n")
+        print("self.walls:")
+        print(self.walls)
+        print("\nself.startingPosition: ", self.startingPosition)
+        print('\n')
+        print(self.corners)
+        print('\n')
+
+
         util.raiseNotDefined()
+
+        # problem.getStartState(): A
 
     def isGoalState(self, state: Any):
         """
@@ -304,6 +316,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+        # problem.isGoalState(node[0]): False
 
     def getSuccessors(self, state: Any):
         """
@@ -329,6 +342,8 @@ class CornersProblem(search.SearchProblem):
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
+
+        # problem.getSuccessors(node[0]): [('B', 'Right', 2.0)]
 
     def getCostOfActions(self, actions):
         """
