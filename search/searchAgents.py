@@ -326,22 +326,17 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-
             currentPosition = state[0]
             corners = state[1]
 
             x,y = currentPosition #Given 
             dx, dy = Actions.directionToVector(action) #Given
             nextx, nexty = int(x + dx), int(y + dy) #Given
-            hitsWall = self.walls[nextx][nexty]#Given 
-
-
+            hitsWall = self.walls[nextx][nexty] #Given 
             cornerSet = set(corners)
             nextXYTuple = (nextx, nexty)
-
             if nextXYTuple in cornerSet:
                 cornerSet.remove(nextXYTuple)
-            
             if not hitsWall:
                 stateUpdate  = (nextXYTuple, tuple(cornerSet))
                 successors.append((stateUpdate, action, 1))
