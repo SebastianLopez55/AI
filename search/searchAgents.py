@@ -295,28 +295,21 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
+
         "*** YOUR CODE HERE ***"
-
-        print(" == TEST ZONE ==\n")
-        print("self.walls:")
-        print(self.walls)
-        print("\nself.startingPosition: ", self.startingPosition)
-        print('\n')
-        print(self.corners)
-        print('\n')
-
-
+        return self.startingPosition, self.corners
         util.raiseNotDefined()
-
-        # problem.getStartState(): A
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
+
         "*** YOUR CODE HERE ***"
+
+        #cornersList = list(state[1])
+        return len(state[1]) == 0
         util.raiseNotDefined()
-        # problem.isGoalState(node[0]): False
 
     def getSuccessors(self, state: Any):
         """
@@ -333,13 +326,27 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+
+            currentPosition = state[0]
+            corners = state[1]
+
+            x,y = currentPosition #Given 
+            dx, dy = Actions.directionToVector(action) #Given
+            nextx, nexty = int(x + dx), int(y + dy) #Given
+            hitsWall = self.walls[nextx][nexty]#Given 
+
+
+            cornerSet = set(corners)
+            nextXYTuple = (nextx, nexty)
+
+            if nextXYTuple in cornerSet:
+                cornerSet.remove(nextXYTuple)
+            
+            if not hitsWall:
+                stateUpdate  = (nextXYTuple, tuple(cornerSet))
+                successors.append((stateUpdate, action, 1))
 
             "*** YOUR CODE HERE ***"
-
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
