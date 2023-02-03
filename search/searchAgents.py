@@ -38,6 +38,7 @@ from typing import List, Tuple, Any
 from game import Directions
 from game import Agent
 from game import Actions
+from util import manhattanDistance
 import util
 import time
 import search
@@ -297,6 +298,7 @@ class CornersProblem(search.SearchProblem):
         """
 
         "*** YOUR CODE HERE ***"
+        # print(str(self.startingPosition) + ", " + str(self.corners))
         return self.startingPosition, self.corners
         util.raiseNotDefined()
 
@@ -306,8 +308,6 @@ class CornersProblem(search.SearchProblem):
         """
 
         "*** YOUR CODE HERE ***"
-
-        #cornersList = list(state[1])
         return len(state[1]) == 0
         util.raiseNotDefined()
 
@@ -321,7 +321,7 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
+        
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -347,7 +347,7 @@ class CornersProblem(search.SearchProblem):
 
         # problem.getSuccessors(node[0]): [('B', 'Right', 2.0)]
 
-    def getCostOfActions(self, actions):
+    def getCostOfActions(self, actions): 
         """
         Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999.  This is implemented for you.
@@ -376,8 +376,8 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
     "*** YOUR CODE HERE ***"
+    
     sortedCorners = list(state[1])
     totalCost = 0
     currCorner = state[0]
@@ -385,12 +385,11 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     if (len(state[1]) == 0):
         return 0
     while(len(sortedCorners) > 0):
-        sortedCorners.sort(key=lambda x: util.manhattanDistance(currCorner, x), reverse=True) #List
+        sortedCorners.sort(key=lambda x: manhattanDistance(currCorner, x), reverse=True) #List
         nextCorner = sortedCorners.pop()
-        totalCost += util.manhattanDistance(currCorner, nextCorner)
+        totalCost += manhattanDistance(currCorner, nextCorner)
         currCorner = nextCorner
     return totalCost
-
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -483,8 +482,25 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    food = foodGrid.asList()
+
+    maxDist = 0
+    MaxDist2 = 0
+
+    # print(foodGrid)
+    for i in range(len(food)):
+        for j in range(len(food)-(i+1)):
+            distBetweenFood = mazeDistance(food[i], food[j+1], problem.startingGameState)
+            # print("CURR DIST:", distBetweenFood)
+            if (distBetweenFood >= maxDist):  
+                maxDist = distBetweenFood
+                MaxDist2 = min(mazeDistance(position, food[i], problem.startingGameState), mazeDistance(position, food[j + 1], problem.startingGameState))
+    if (len(food) == 1): 
+        # print(position)
+        # print(food[0])
+        # print(state)   
+        return mazeDistance(position, food[0], problem.startingGameState)        
+    return maxDist + MaxDist2
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -513,9 +529,7 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.astar(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -550,8 +564,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         """
         x,y = state
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
     """
