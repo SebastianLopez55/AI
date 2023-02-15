@@ -51,7 +51,7 @@ def sentence1() -> Expr:
     """
     "*** BEGIN YOUR CODE HERE ***"
 
-    #Propositions
+    #Literals/Primes/Atomic 
     A = Expr('A')
     B = Expr('B')
     C = Expr('C')
@@ -182,7 +182,7 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     """
     Given a list of Expr literals (i.e. in the form A or ~A), return a single 
     Expr instance in CNF (conjunctive normal form) that represents the logic 
-    that at least one of the literals  ist is true.
+    that at least one of the literals is true.
     >>> A = PropSymbolExpr('A');
     >>> B = PropSymbolExpr('B');
     >>> symbols = [A, B]
@@ -198,6 +198,9 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     True
     """
     "*** BEGIN YOUR CODE HERE ***"
+
+    return disjoin(literals)
+
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
@@ -210,7 +213,13 @@ def atMostOne(literals: List[Expr]) -> Expr:
     itertools.combinations may be useful here.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    result = []
+    combinations = itertools.combinations(literals, 2)
+    for a, b in combinations:
+        result.append(disjoin(~a, ~b))
+
+    return conjoin(result)
     "*** END YOUR CODE HERE ***"
 
 
@@ -221,6 +230,7 @@ def exactlyOne(literals: List[Expr]) -> Expr:
     the expressions in the list is true.
     """
     "*** BEGIN YOUR CODE HERE ***"
+    return conjoin(atLeastOne(literals), atMostOne(literals))
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
