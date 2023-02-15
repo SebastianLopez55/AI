@@ -50,6 +50,24 @@ def sentence1() -> Expr:
     (not A) or (not B) or C
     """
     "*** BEGIN YOUR CODE HERE ***"
+
+    #Propositions
+    A = Expr('A')
+    B = Expr('B')
+    C = Expr('C')
+
+    #Negations
+    not_a = ~A
+    not_b = ~B
+
+    a_or_b = disjoin(A,B)
+    not_b_or_c = disjoin(not_b, C)
+    statement3 = disjoin(not_a, not_b_or_c)    
+
+    elements = [a_or_b, not_a % not_b_or_c, statement3]
+
+    return conjoin(elements)
+
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
