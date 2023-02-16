@@ -372,7 +372,7 @@ def checkLocationSatisfiability(x1_y1: Tuple[int, int], x0_y0: Tuple[int, int], 
     KB.append(axiomsOne)
     KB.append(axiomZero)
     KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
-    KB.append(PropSymbolExpr(pacman_str, x1, y1, time=1))
+    #KB.append(PropSymbolExpr(pacman_str, x1, y1, time=1))
     KB.append(PropSymbolExpr(action0, time=0))
     KB.append(PropSymbolExpr(action1, time=1))
 
