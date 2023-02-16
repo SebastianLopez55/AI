@@ -372,14 +372,11 @@ def checkLocationSatisfiability(x1_y1: Tuple[int, int], x0_y0: Tuple[int, int], 
     KB.append(axiomsOne)
     KB.append(axiomZero)
     KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
-    #KB.append(PropSymbolExpr(pacman_str, x1, y1, time=1))
     KB.append(PropSymbolExpr(action0, time=0))
     KB.append(PropSymbolExpr(action1, time=1))
-
-    # print("KB:", KB)
+    
     model1 = findModel(conjoin(KB + [PropSymbolExpr(pacman_str, x1, y1, time=1)]))
     model2 = findModel(conjoin(KB + [~PropSymbolExpr(pacman_str, x1, y1, time=1)]))
-    
     
     return (model1, model2)
     "*** END YOUR CODE HERE ***"
@@ -411,16 +408,16 @@ def positionLogicPlan(problem) -> List:
     KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
     for t in range(50):
         print("Timestep:", t)
+        # Pacman is at exactly one of non_wall_coords at t
         KB.append(exactlyOne([PropSymbolExpr(pacman_str, x, y, time=t) for x,y in non_wall_coords]))
         model = findModel(conjoin(KB + [PropSymbolExpr(pacman_str, xg, yg, time=t)]))
         if (model != False):
             return extractActionSequence(model, actions)
         KB.append(exactlyOne([PropSymbolExpr(action, time=t) for action in actions]))
-        if (t > 0):
-            KB += [pacmanSuccessorAxiomSingle(x, y, t, walls_grid) for x,y in non_wall_coords]
+        KB += [pacmanSuccessorAxiomSingle(x, y, t + 1, walls_grid) for x,y in non_wall_coords]
+        
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
-
 #______________________________________________________________________________
 # QUESTION 5
 
@@ -447,6 +444,23 @@ def foodLogicPlan(problem) -> List:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
+    KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
+    KB.append(conjoin([PropSymbolExpr(food_str, x, y, time=0) for x, y in food]))
+    for t in range(50):
+        print("Time step: "+str(t))
+        KB.append(exactlyOne([PropSymbolExpr(pacman_str, x, y, time=t) for x, y in non_wall_coords]))
+        model = findModel(conjoin(KB) & conjoin([~PropSymbolExpr(food_str, x, y, time=t) for x, y in food]))
+        if model:
+            return extractActionSequence(model, actions)
+        KB.append(exactlyOne([PropSymbolExpr(action, time=t) for action in actions]))
+        KB.append(conjoin([pacmanSuccessorAxiomSingle(x, y, t+1, walls) for x, y in non_wall_coords]))
+        FoodtransAxioms = []
+        for x, y in food:
+            FoodtransAxiom1 = (PropSymbolExpr(food_str, x, y, time=t) & ~PropSymbolExpr(pacman_str, x, y, time=t)) >> PropSymbolExpr(food_str, x, y, time=t+1)
+            FoodtransAxiom2 = (PropSymbolExpr(food_str, x, y, time=t) & PropSymbolExpr(pacman_str, x, y, time=t)) | (~PropSymbolExpr(food_str, x, y, time=t)) >> (~PropSymbolExpr(food_str, x, y, time=t+1))
+            FoodtransAxioms += [FoodtransAxiom1,FoodtransAxiom2]
+        KB.append(conjoin(FoodtransAxioms))
+    return None    
     util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
