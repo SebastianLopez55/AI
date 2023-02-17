@@ -482,11 +482,40 @@ def localization(problem, agent) -> Generator:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    # Add knowledge about walls
+    knowWalls = [PropSymbolExpr(wall_str, x, y) for x, y in walls_list]
+    # Add knowledge about non-walls
+    nonWalls = [~PropSymbolExpr(wall_str, x, y) for x, y in non_outer_wall_coords if (x,y) not in walls_list]
+    KB.append(conjoin(knowWalls))
+    KB.append(conjoin(nonWalls))
 
     for t in range(agent.num_timesteps):
+        # Pacman is at exactly one of non_wall_coords at t
+        oneNonWall = pacphysicsAxioms(t, all_coords, non_outer_wall_coords, walls_grid, sensorAxioms, allLegalSuccessorAxioms)
+        KB.append(oneNonWall)
+        if (t > 0):
+            # Pacman is at exactly one of non_wall_coords at t-1
+            expression3 = PropSymbolExpr(agent.actions[t-1], time=t-1)
+            KB.append(expression3)
+        # Add percept rules to KB
+        KB.append(fourBitPerceptRules(t, agent.getPercepts()))
+        locations = []
+        # Check if pacman is at (x,y) at time t
+        for x, y in non_outer_wall_coords:
+            locationExpression = PropSymbolExpr(pacman_str, x, y, time=t)
+            if findModel(conjoin(KB) & locationExpression):
+                locations.append((x,y))
+            # If pacman is at (x,y) at time t, add it to KB
+            if entails(conjoin(KB), locationExpression):
+                KB.append(locationExpression)
+            # If pacman is not at (x,y) at time t, add it to KB
+            if entails(conjoin(KB), ~locationExpression):
+                KB.append(~locationExpression)
+        # Move to next state
+        agent.moveToNextState(agent.actions[t])
         "*** END YOUR CODE HERE ***"
-        yield possible_locations
+        yield locations
 
 #______________________________________________________________________________
 # QUESTION 7
@@ -514,6 +543,9 @@ def mapping(problem, agent) -> Generator:
     KB.append(conjoin(outer_wall_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
+
+     
+
     util.raiseNotDefined()
 
     for t in range(agent.num_timesteps):
