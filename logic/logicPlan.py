@@ -594,9 +594,35 @@ def slam(problem, agent) -> Generator:
     KB.append(conjoin(outer_wall_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    KB.append(PropSymbolExpr(pacman_str, pac_x_0, pac_y_0, time=0))
+    KB.append(~PropSymbolExpr(wall_str, pac_x_0, pac_y_0))
+    known_map[pac_x_0][pac_y_0] = 0
 
     for t in range(agent.num_timesteps):
+        if (t > 0):
+            KB.append(PropSymbolExpr(agent.actions[t-1], time=t-1))    
+        KB.append(pacphysicsAxioms(t, all_coords, non_outer_wall_coords, known_map, SLAMSensorAxioms, SLAMSuccessorAxioms))
+        KB.append(numAdjWallsPerceptRules(t, agent.getPercepts()))
+
+        for x, y in non_outer_wall_coords:
+            expWalls = PropSymbolExpr(wall_str, x, y)
+            if entails(conjoin(KB), ~expWalls):
+                KB.append(~expWalls)
+                known_map[x][y] = 0
+            if entails(conjoin(KB), expWalls):
+                KB.append(expWalls)
+                known_map[x][y] = 1
+
+        possible_locations = []
+        for x,y in non_outer_wall_coords:
+            currPacLocation = PropSymbolExpr(pacman_str, x, y, time=t)
+            if entails(conjoin(KB), ~currPacLocation):
+                KB.append(~currPacLocation)
+            if entails(conjoin(KB), currPacLocation):
+                KB.append(currPacLocation)
+            if findModel(conjoin(KB) & currPacLocation):
+                possible_locations.append((x, y))
+        agent.moveToNextState(agent.actions[t])
         "*** END YOUR CODE HERE ***"
         yield (known_map, possible_locations)
 
