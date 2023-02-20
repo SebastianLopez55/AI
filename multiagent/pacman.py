@@ -94,7 +94,7 @@ class GameState:
         if self.isWin() or self.isLose():
             return []
 
-        if agentIndex == 0:  # Pacman is moving
+        if agentIndex == 0:  # Pacman is movi ng
             return PacmanRules.getLegalActions(self)
         else:
             return GhostRules.getLegalActions(self, agentIndex)

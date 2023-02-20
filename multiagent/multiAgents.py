@@ -69,65 +69,73 @@ class ReflexAgent(Agent):
         """
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
-        # newPos: pacman possition after moving
+        # newPos: Pacman possition after moving
         newPos = successorGameState.getPacmanPosition()
         # newFood: grid of booleans representing food locations
         newFood = successorGameState.getFood()
         # newGhostStates: list containing objects of GhostStates
         newGhostStates = successorGameState.getGhostStates()
-        # newScaredTimes: list of integers representing the number of moves that each ghost will remain scared??
+        # newScaredTimes: list representing time left ghost is scared -> list
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]        
         "*** YOUR CODE HERE ***"    
 
-        # Check if Pacman is stuck in a corrner 
+        """
+        Variable declarations
+        """
+        # Get food remaining -> int
+        foodRemaining = successorGameState.getNumFood()
+        # Get capsule remaining. "Big food" -> list
+        capsulesRemaining = successorGameState.getCapsules()
+        # Calculate closest distance to capsule remaining. "Big food" -> int
+        closestCapsuleDis = min([manhattanDistance(newPos, capsule) for capsule in capsulesRemaining], default=0)
+        # calculate furthest distance to food remaining -> int
+        farthestFoodDis = max([manhattanDistance(newPos, food) for food in newFood.asList()], default=0)
+        # Calculate closest distance to food remaining -> int
+        closestFoodDis = min([manhattanDistance(newPos, food) for food in newFood.asList()], default=0)
+        # Calculate distance to ghosts - > list
+        ghostDistances = [manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates]
+        # Encorage Pacman explore by moving towards maze center 
+        disToCenter = abs(newPos[0] - currentGameState.getWalls().width // 2) + abs(newPos[1] - currentGameState.getWalls().height // 2)
+
+        """
+        Logic for the heuristics
+        """
+       
+        # Penalize Pacman if he stays at the same position
         if currentGameState.getPacmanPosition() == newPos:
             return -float('inf')
-        # Calculate distance to ghost
-        distance_to_ghost = manhattanDistance(newPos, newGhostStates[0].getPosition()) 
-        # Calculate food remaining
-        foodRemaining = len(newFood.asList())
+
+        # Penalize Pacmanm for revisiting the same position
+        visited = set()
+        if newPos in visited:
+            revisitedPenalty = -1000
+        else:
+            revisitedPenalty = 0
+            visited.add(currentGameState.getPacmanPosition())
+
+        # Food heuristic 
+        if foodRemaining == 0:
+            foodHeuristic = 1000
+        else:
+            foodHeuristic = closestFoodDis + (1/farthestFoodDis) + (10 * foodRemaining)
+            
+        # Ghost heuristic
+        if min(ghostDistances) < 2:
+            ghostHeuristic = -500
+        else:
+            ghostHeuristic = min(ghostDistances) + (10 * sum(newScaredTimes))       
+
+        # Final score calculation
+        finalScore = (successorGameState.getScore() + 
+                        closestCapsuleDis + 
+                            revisitedPenalty +
+                                foodHeuristic +
+                                    ghostHeuristic +
+                                        disToCenter)
+
         
-        # Calculate distance to food
-        furthestFood = 0
-        closestFood = 100
-        for foodCoordinates in newFood.asList():
-            furthestFood = max(furthestFood, manhattanDistance(newPos, foodCoordinates))
-            closestFood = min(closestFood, manhattanDistance(newPos, foodCoordinates))
-
-
-        foodDistanceHeuristic = 10*closestFood / furthestFood
-        foodHeuristic = 1/foodRemaining + foodDistanceHeuristic
-        
-        # if distance_to_ghost < 3:
-        #     distance_to_ghost = -1000
-        # elif (distance_to_ghost > 3 and distance_to_ghost < 5):
-        #     distance_to_ghost = -500
-        # elif (distance_to_ghost > 5 and distance_to_ghost < 7):
-        #     distance_to_ghost = -100
-
-        
-        
-        finalScore = successorGameState.getScore() + foodHeuristic + distance_to_ghost
-
-
-        
-
+        #finalScore = successorGameState.getScore()
         return finalScore
-        
-        """
-        Remaining Food: if food left good if no food left bad: just add the food left to the score
-        Distance to Food: if distance big bad if distance small good
-        Distance to Ghosts: if distance big good if distance small bad 
-        Power Pellet: if distance is small good if distance is big bad
-        Capsule Count: 
-        """
-
-        # print(f'\n 1 successorGameState:\n{successorGameState}\n')
-        # print(f'\n 2 newPos:\n{newPos}\n')
-        # print(f'\n 3 newFood:\n{newFood}\n')
-        # print(f'\n 4 newGhostStates:\n{newGhostStates}\n')
-        # print(f'\n 5 newScaredTimes:\n{newScaredTimes}\n')
-        # print(f'\n 6 newGhostStates[0]:\n{newGhostStates[0].getPosition()}\n')
 
 def scoreEvaluationFunction(currentGameState: GameState):
     """
