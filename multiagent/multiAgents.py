@@ -69,7 +69,7 @@ class ReflexAgent(Agent):
         """
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
-        # newPos: Pacman possition after moving
+        # newPos: Pacman position after moving
         newPos = successorGameState.getPacmanPosition()
         # newFood: grid of booleans representing food locations
         newFood = successorGameState.getFood()
@@ -94,7 +94,7 @@ class ReflexAgent(Agent):
         closestFoodDis = min([manhattanDistance(newPos, food) for food in newFood.asList()], default=0)
         # Calculate distance to ghosts - > list
         ghostDistances = [manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates]
-        # Encorage Pacman explore by moving towards maze center 
+        # Encourage Pacman explore by moving towards maze center 
         disToCenter = abs(newPos[0] - currentGameState.getWalls().width // 2) + abs(newPos[1] - currentGameState.getWalls().height // 2)
 
         """
