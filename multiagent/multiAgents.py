@@ -79,6 +79,41 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]        
         "*** YOUR CODE HERE ***"    
 
+        # Check if Pacman is stuck in a corrner 
+        if currentGameState.getPacmanPosition() == newPos:
+            return -float('inf')
+        # Calculate distance to ghost
+        distance_to_ghost = manhattanDistance(newPos, newGhostStates[0].getPosition()) 
+        # Calculate food remaining
+        foodRemaining = len(newFood.asList())
+        
+        # Calculate distance to food
+        furthestFood = 0
+        closestFood = 100
+        for foodCoordinates in newFood.asList():
+            furthestFood = max(furthestFood, manhattanDistance(newPos, foodCoordinates))
+            closestFood = min(closestFood, manhattanDistance(newPos, foodCoordinates))
+
+
+        foodDistanceHeuristic = 10*closestFood / furthestFood
+        foodHeuristic = 1/foodRemaining + foodDistanceHeuristic
+        
+        # if distance_to_ghost < 3:
+        #     distance_to_ghost = -1000
+        # elif (distance_to_ghost > 3 and distance_to_ghost < 5):
+        #     distance_to_ghost = -500
+        # elif (distance_to_ghost > 5 and distance_to_ghost < 7):
+        #     distance_to_ghost = -100
+
+        
+        
+        finalScore = successorGameState.getScore() + foodHeuristic + distance_to_ghost
+
+
+        
+
+        return finalScore
+        
         """
         Remaining Food: if food left good if no food left bad: just add the food left to the score
         Distance to Food: if distance big bad if distance small good
@@ -86,29 +121,13 @@ class ReflexAgent(Agent):
         Power Pellet: if distance is small good if distance is big bad
         Capsule Count: 
         """
+
         # print(f'\n 1 successorGameState:\n{successorGameState}\n')
         # print(f'\n 2 newPos:\n{newPos}\n')
         # print(f'\n 3 newFood:\n{newFood}\n')
         # print(f'\n 4 newGhostStates:\n{newGhostStates}\n')
         # print(f'\n 5 newScaredTimes:\n{newScaredTimes}\n')
         # print(f'\n 6 newGhostStates[0]:\n{newGhostStates[0].getPosition()}\n')
-
-        furthestFood = 0
-        closestFood = 100
-        for foodCoordinates in newFood.asList():
-            furthestFood = max(furthestFood, manhattanDistance(newPos, foodCoordinates))
-            closestFood = min(closestFood, manhattanDistance(newPos, foodCoordinates))
-
-        distance_to_ghost = manhattanDistance(newPos, newGhostStates[0].getPosition()) 
-        foodRemaining = len(newFood.asList())
-        
-        foodHeuristic = 10*foodRemaining - 3*closestFood - furthestFood
-        finalScore = successorGameState.getScore() + foodHeuristic + 1/distance_to_ghost
-
-        print(action)
-
-        return finalScore
-
 
 def scoreEvaluationFunction(currentGameState: GameState):
     """
