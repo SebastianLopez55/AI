@@ -86,8 +86,6 @@ class ReflexAgent(Agent):
         Power Pellet: if distance is small good if distance is big bad
         Capsule Count: 
         """
-
-
         # print(f'\n 1 successorGameState:\n{successorGameState}\n')
         # print(f'\n 2 newPos:\n{newPos}\n')
         # print(f'\n 3 newFood:\n{newFood}\n')
@@ -104,10 +102,10 @@ class ReflexAgent(Agent):
         distance_to_ghost = manhattanDistance(newPos, newGhostStates[0].getPosition()) 
         foodRemaining = len(newFood.asList())
         
-   
-   
+        foodHeuristic = 10*foodRemaining - 3*closestFood - furthestFood
+        finalScore = successorGameState.getScore() + foodHeuristic + 1/distance_to_ghost
 
-        finalScore = successorGameState.getScore() + foodRemaining 
+        print(action)
 
         return finalScore
 
