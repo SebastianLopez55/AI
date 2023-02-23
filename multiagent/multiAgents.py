@@ -29,7 +29,6 @@ class ReflexAgent(Agent):
     headers.
     """
 
-
     def getAction(self, gameState: GameState):
         """
         You do not need to change this method, but you're welcome to.
@@ -86,55 +85,32 @@ class ReflexAgent(Agent):
         foodRemaining = successorGameState.getNumFood()
         # Get capsule remaining. "Big food" -> list
         capsulesRemaining = successorGameState.getCapsules()
-        # Calculate closest distance to capsule remaining. "Big food" -> int
-        closestCapsuleDis = min([manhattanDistance(newPos, capsule) for capsule in capsulesRemaining], default=0)
         # calculate furthest distance to food remaining -> int
         farthestFoodDis = max([manhattanDistance(newPos, food) for food in newFood.asList()], default=0)
         # Calculate closest distance to food remaining -> int
         closestFoodDis = min([manhattanDistance(newPos, food) for food in newFood.asList()], default=0)
         # Calculate distance to ghosts - > list
         ghostDistances = [manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates]
-        # Encourage Pacman explore by moving towards maze center 
-        disToCenter = abs(newPos[0] - currentGameState.getWalls().width // 2) + abs(newPos[1] - currentGameState.getWalls().height // 2)
 
         """
         Logic for the heuristics
         """
-       
-        # Penalize Pacman if he stays at the same position
-        if currentGameState.getPacmanPosition() == newPos:
-            return -float('inf')
-
-        # Penalize Pacmanm for revisiting the same position
-        visited = set()
-        if newPos in visited:
-            revisitedPenalty = -1000
-        else:
-            revisitedPenalty = 0
-            visited.add(currentGameState.getPacmanPosition())
 
         # Food heuristic 
         if foodRemaining == 0:
             foodHeuristic = 1000
         else:
-            foodHeuristic = closestFoodDis + (1/farthestFoodDis) + (10 * foodRemaining)
+            foodHeuristic = (1/closestFoodDis) - (10*foodRemaining)
             
         # Ghost heuristic
-        if min(ghostDistances) < 2:
-            ghostHeuristic = -500
+        if min(ghostDistances) < 3:
+            ghostHeuristic = -5000
         else:
-            ghostHeuristic = min(ghostDistances) + (10 * sum(newScaredTimes))       
+            ghostHeuristic = 0    
 
         # Final score calculation
-        finalScore = (successorGameState.getScore() + 
-                        closestCapsuleDis + 
-                            revisitedPenalty +
-                                foodHeuristic +
-                                    ghostHeuristic +
-                                        disToCenter)
-
-        
-        #finalScore = successorGameState.getScore()
+        finalScore = foodHeuristic + ghostHeuristic 
+                            
         return finalScore
 
 def scoreEvaluationFunction(currentGameState: GameState):
