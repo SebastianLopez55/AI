@@ -172,6 +172,44 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
+
+
+        """
+        self.depth -> 2
+        gameState.getLegalActions(0) -> ['Left', 'Right']
+        """
+
+        print("\n============   START 0F PRINT STATEMENTS FOR TESTING ============ \n\n")
+    
+        print("\n\n============   ENDS 0F PRINT STATEMENTS FOR TESTING ============  \n")
+    
+        def minimax(gameState, depth, agentIndex):
+            # Check if state is a terminal state: return the state's utility
+            if gameState.isWin() or gameState.isLose():
+                return self.evaluationFunction(gameState)
+
+            # Check if depth is reached
+            if depth == self.depth:
+                return self.evaluationFunction(gameState)
+
+            # Check if the agent is MAX: return max-value(state)
+            if agentIndex == 0:
+                return max_value(gameState, depth, agentIndex)
+
+            # Check if agent is MIN: return min-value(state)
+            if agentIndex > 0:
+                return min_value(gameState, depth, agentIndex)
+
+        def max_value(gameState, depth, agentIndex):
+            return minimax(gameState, depth + 1, agentIndex + 1)
+            
+        def min_value(gameState, depth, agentIndex):
+            # Check if we already reach the last ghost: reset to Pacman
+            if gameState.getNumAgents() == agentIndex:
+                return minimax(gameState, depth + 1, 0)
+            return minimax(gameState, depth, agentIndex + 1)
+
+        return minimax(gameState, 0, 0)
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
