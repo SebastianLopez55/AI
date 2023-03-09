@@ -369,7 +369,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     foodRemaining = currentGameState.getNumFood()
     # Get capsule remaining. "Big food" -> list
     capsulesRemaining = currentGameState.getCapsules()
-    # calculate furthest distance to food remaining -> int
+    # calculate furthest distance to food remaining -> intgit
     lst_food_dist = [manhattanDistance(newPos, food) for food in newFood.asList()]
     farthestFoodDis = max(lst_food_dist, default=0)
     # Calculate closest distance to food remaining -> int
