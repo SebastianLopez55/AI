@@ -1,3 +1,3 @@
-AI Search Problem:
+Artificial Intelligence:
 
-Packman needs to find all the food in the maze.
+Introductory project to AI.
