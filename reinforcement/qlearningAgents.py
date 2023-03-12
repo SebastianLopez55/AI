@@ -43,6 +43,7 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
+        self.qVals = util.Counter()
 
     def getQValue(self, state, action):
         """
@@ -51,7 +52,9 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
+        return self.qVals[(state, action)]
         util.raiseNotDefined()
+        
 
     def computeValueFromQValues(self, state):
         """
@@ -61,6 +64,19 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
+
+        actions = self.getLegalActions(state)
+        values = []
+        
+        #return 0 if there are no actions from this state
+        if len(actions) == 0:
+            return 0
+        #iterate over actions and add all the qValues from any action from this state
+        else:
+            for action in actions:
+                values.append(self.getQValue(state, action))
+        #return the highest value
+        return max(values)
         util.raiseNotDefined()
 
     def computeActionFromQValues(self, state):
@@ -70,6 +86,23 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        actions = self.getLegalActions(state)
+        allActions = []
+        
+        #return None if there are no actions from this state
+        if len(actions) == 0:
+            return None
+        #iterate over actions and append all the qvalues and actions to 'allActions'
+        else:
+            for action in actions:
+                allActions.append((self.getQValue(state, action), action))
+            #get all the qValue, action pairs that are the best
+            bestActions = [pair for pair in allActions if pair == max(allActions)]
+            #randomly choose a qValue, action pair if two or more are the best
+            bestActionPair = random.choice(bestActions)
+            print(bestActionPair)
+        #return the best action
+        return bestActionPair[1]
         util.raiseNotDefined()
 
     def getAction(self, state):
@@ -84,11 +117,20 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None
+        #action = None
         "*** YOUR CODE HERE ***"
+    
+        #possibly pick a random action with probability epsilon
+        p = self.epsilon
+        if util.flipCoin(p):
+            return random.choice(legalActions)
+        #else return the best action
+        else:
+            return self.computeActionFromQValues(state)
+
         util.raiseNotDefined()
 
-        return action
+        #return action
 
     def update(self, state, action, nextState, reward: float):
         """
@@ -99,7 +141,12 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        qSa = self.getQValue(state, action)
+        #get the sample
+        sample = reward + self.discount*self.computeValueFromQValues(nextState)
+        #perform the update and add it to our qVals dict-counter
+        self.qVals[(state, action)] = (1-self.alpha)*qSa + self.alpha*sample
+        #util.raiseNotDefined()
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
