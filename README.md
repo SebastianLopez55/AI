@@ -1,3 +1,3 @@
 Artificial Intelligence:
 
-Introductory project to AI.
+Introductory projects to AI.
